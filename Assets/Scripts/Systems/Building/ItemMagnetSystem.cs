@@ -1,6 +1,5 @@
 ﻿using Repository;
 using Services.ItemPickup;
-using Settings.Building;
 using Systems.Core;
 using UnityEngine;
 
@@ -10,21 +9,15 @@ namespace Systems.Building
     {
         private readonly CameraProvider _cameraProvider;
         private readonly IItemPickupService _itemPickupService;
-        private readonly IBuildingSettings _buildingSettings;
-        private readonly PlayerProvider _playerProvider;
         private readonly RaycastHit[] _result = new RaycastHit[1];
 
         public ItemMagnetSystem(
             CameraProvider cameraProvider, 
-            IItemPickupService itemPickupService,
-            IBuildingSettings buildingSettings,
-            PlayerProvider playerProvider
+            IItemPickupService itemPickupService
         )
         {
             _cameraProvider = cameraProvider;
             _itemPickupService = itemPickupService;
-            _buildingSettings = buildingSettings;
-            _playerProvider = playerProvider;
         }
         
         public void Update()
@@ -40,53 +33,30 @@ namespace Systems.Building
             if (pickedItem == null)
                 return;
 
-            // Physics.RaycastNonAlloc(camera.Position.Value, dir, _result, 10000f,
-            //     pickedItem.AllowedSurfaceMask2.Value);
-            
-            var raytcast = Physics.Raycast(camera.Position.Value, dir, out var hit, _buildingSettings.MagnetDistance,
+            Physics.RaycastNonAlloc(camera.Position.Value, dir, _result, 10000f,
                 pickedItem.AllowedSurfaceMask2.Value);
             
-            if (!raytcast)
-                return;
-            
-            Debug.DrawRay(camera.Position.Value, dir, Color.red);
+            //Debug.DrawRay(camera.Position.Value, dir, Color.red);
 
-            // foreach (var raycastHit in _result)
-            // {
-            //     if (raycastHit.transform == null)
-            //         return;
-            //     
-            //     var point = pickedItem.Transform.Value.InverseTransformVector(raycastHit.normal);
-            //     var rotation = Quaternion.FromToRotation(Vector3.up, point);
-            //     
-            //     pickedItem.LocalRotation.SetValue(pickedItem.LocalRotation.Value * rotation);
-            //     
-            //     
-            //     var position = pickedItem.Position.Value;
-            //     position.y = raycastHit.point.y;
-            //     pickedItem.Position.SetValue(raycastHit.point);
-            //     Debug.Log($"raycastHit.point : {raycastHit.point}");
-            //     Debug.Log($"raycastHit.transform: {raycastHit.transform}");
-            // }
-            
-            if (hit.transform == null)
-                return;
-                
-            var point = pickedItem.Transform.Value.InverseTransformVector(hit.normal);
-            var Up = pickedItem.Transform.Value.InverseTransformVector(pickedItem.Transform.Value.up);
-            var rotation = Quaternion.FromToRotation(Up, point);
-                
-            pickedItem.LocalRotation.SetValue(pickedItem.LocalRotation.Value * rotation);
-
-
-            var position = pickedItem.Position.Value;
-            position.y = hit.point.y + pickedItem.Size.Value.y / 2f;
-            pickedItem.Position.SetValue(hit.point);
-            Debug.Log($"position : {position}");
-
-            for (var index = 0; index < _result.Length; index++)
+            foreach (var raycastHit in _result)
             {
-                _result[index] = new RaycastHit();
+                if (raycastHit.transform == null)
+                    return;
+                
+                var point = pickedItem.Transform.Value.InverseTransformVector(raycastHit.normal);
+                var Up = pickedItem.Transform.Value.InverseTransformVector(pickedItem.Transform.Value.up);
+                var rotation = Quaternion.FromToRotation(Up, point);
+                
+                pickedItem.LocalRotation.SetValue(pickedItem.LocalRotation.Value * rotation);
+            
+                var position = raycastHit.point;
+                position += raycastHit.normal.normalized * pickedItem.Size.Value.y / 2f;
+                pickedItem.Position.SetValue(position);
+
+                for (var index = 0; index < _result.Length; index++)
+                {
+                    _result[index] = new RaycastHit();
+                }
             }
         }
     }
