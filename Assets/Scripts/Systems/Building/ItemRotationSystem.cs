@@ -39,16 +39,11 @@ namespace Systems.Building
             if (_itemPickupService.PickedItem == null)
                 return;
 
-            //var rotation = _itemPickupService.PickedItem.LocalRotation.Value.eulerAngles;
-            var rotation = _itemPickupService.PickedItem.Transform.Value.localEulerAngles;
+            var transform = _itemPickupService.PickedItem.Transform.Value;
+            var up = transform.InverseTransformVector(_itemPickupService.PickedItem
+                .Transform.Value.up);
             
-            rotation.y += dir * _inputSettings.ItemRotationSensitivity;
-            //
-             //_itemPickupService.PickedItem.LocalRotation.SetValue(Quaternion.Euler(rotation));
-
-            //_itemPickupService.PickedItem.Transform.Value.localEulerAngles = rotation;
-            
-            _itemPickupService.PickedItem.Transform.Value.Rotate(_itemPickupService.PickedItem.Transform.Value.InverseTransformVector(_itemPickupService.PickedItem.Transform.Value.up), 1f);
+            _itemPickupService.PickedItem.Transform.Value.Rotate(up,  dir * _inputSettings.ItemRotationSensitivity);
         }
     }
 }

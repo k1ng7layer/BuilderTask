@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b5b9adc064a44029b7919ae1fe4eab95, type: 3}
   m_Name: BuildingSettings
   m_EditorClassIdentifier: 
-  _magnetDistance: 10
+  _magnetDistance: 5

@@ -80,10 +80,9 @@ namespace Systems.Building
 
 
             var position = pickedItem.Position.Value;
-            //position.y = hit.point.y;
+            position.y = hit.point.y + pickedItem.Size.Value.y / 2f;
             pickedItem.Position.SetValue(hit.point);
-            Debug.Log($"raycastHit.point : {hit.point}");
-            // Debug.Log($"raycastHit.transform: {pickedItem.Position.Value}");
+            Debug.Log($"position : {position}");
 
             for (var index = 0; index < _result.Length; index++)
             {

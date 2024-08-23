@@ -15,3 +15,4 @@ MonoBehaviour:
   _playerSettings: {fileID: 11400000, guid: 35939b18b5d61cb42a23971a18c42060, type: 2}
   _inputSettings: {fileID: 11400000, guid: e5b36c4cf14635b4fba182a4cd18d8fe, type: 2}
   _prefabBase: {fileID: 11400000, guid: b9f70b954cc6b704d9217e5afcbad4e4, type: 2}
+  _buildingSettings: {fileID: 11400000, guid: a76ad91e8e8b1c84a8dc536ffc56e67c, type: 2}
