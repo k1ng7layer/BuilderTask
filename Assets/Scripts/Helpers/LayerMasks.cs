@@ -7,10 +7,12 @@ namespace Helpers
         private static readonly Mask PlayerMask = new Mask(Layers.Player);
 		private static readonly Mask DefaultMask = new Mask(Layers.Default);
 		private static readonly Mask FloorMask = new Mask(Layers.Floor);
+		private static readonly Mask BuildingSurfaceMask = new Mask(Layers.BuildingSurface);
 		
 		public static int Player => PlayerMask.Value;
 		public static int Default => DefaultMask.Value;
 		public static int Floor => FloorMask.Value;
+		public static int BuildingSurface => BuildingSurfaceMask.Value;
 
 		// public static Mask CreateMasks()
 		// {

@@ -1,20 +1,32 @@
 using Entity;
+using Helpers;
+using Services.Collision;
 using UnityEngine;
+using Zenject;
 
 namespace Views.Impl
 {
-    public class ItemView : EntityView
+    public class ItemView : EntityView, IBuildingSurface
     {
         [SerializeField] private Renderer _renderer;
         [SerializeField] private MeshFilter _meshFilter;
         [SerializeField] private Collider _collider;
+        [SerializeField] private BuildingSurfaceType _buildingSurfaceType;
+        [Inject] private ISurfaceCollisionService _surfaceCollisionService;
         
         private ItemEntity _itemEntity;
         private Color _originColor;
+        private Color _transparent;
+
+        public int Hash => transform.GetHashCode();
+        public BuildingSurfaceType BuildingSurfaceType => _buildingSurfaceType;
 
         private void Awake()
         {
             _originColor = _renderer.material.color;
+
+            _transparent = _originColor;
+            _transparent.a = .3f;
         }
 
         public override void LinkEntity(GameEntity entity)
@@ -23,25 +35,58 @@ namespace Views.Impl
 
             _itemEntity = (ItemEntity)entity;
             
-            _itemEntity.Selected.ValueChanged += OnSelectedChanged;
             _itemEntity.Size.SetValue(_collider.bounds.size);
+
+            _itemEntity.Picked.ValueChanged += OnPickedChanged;
+            _itemEntity.Selected.ValueChanged += OnSelectedChanged;
+            _itemEntity.BuildingEntityType.ValueChanged += OnBuildingEntityTypeChanged;
+            _itemEntity.Layer.ValueChanged += OnLayerChanged;
+            _itemEntity.Blocked.ValueChanged += OnBlockedChanged;
+            _itemEntity.AttachedToSurface.ValueChanged += AttachedToSurfaceChanged;
+            
+            OnLayerChanged(_itemEntity.Layer.Value);
+            OnBuildingEntityTypeChanged(_itemEntity.BuildingEntityType.Value);
         }
 
         protected override void OnEntityDestroy()
         {
+            _itemEntity.Picked.ValueChanged -= OnPickedChanged;
+            _itemEntity.Layer.ValueChanged -= OnLayerChanged;
             _itemEntity.Selected.ValueChanged -= OnSelectedChanged;
+            _itemEntity.Blocked.ValueChanged -= OnBlockedChanged;
+            _itemEntity.BuildingEntityType.ValueChanged -= OnBuildingEntityTypeChanged;
+            _itemEntity.AttachedToSurface.ValueChanged -= AttachedToSurfaceChanged;
+        }
+
+        private void OnBlockedChanged(bool value)
+        {
+            _renderer.material.color = value ? Color.red : Color.green;
+        }
+
+        private void OnPickedChanged(bool value)
+        {
+            _collider.isTrigger = value;
+        }
+
+        private void AttachedToSurfaceChanged(bool value)
+        {
+            _renderer.material.color = value ? _originColor : _transparent;
+        }
+
+        private void OnLayerChanged(int layer)
+        {
+            gameObject.layer = layer;
+        }
+
+        private void OnBuildingEntityTypeChanged(BuildingSurfaceType buildingSurfaceType)
+        {
+            _buildingSurfaceType = buildingSurfaceType;
         }
 
         private void OnSelectedChanged(bool value)
         {
-            Debug.Log($"OnSelectedChanged: {value}");
             _renderer.material.color = value ? Color.cyan : _originColor;
         }
-
-        // protected override void OnPositionChanged(Vector3 value)
-        // {
-        //     transform.localPosition = value;
-        // }
 
         private void Update()
         {
@@ -51,16 +96,55 @@ namespace Views.Impl
             _itemEntity.Position.Value = transform.position;
              _itemEntity.Rotation.Value = transform.rotation;
             _itemEntity.LocalRotation.Value = transform.localRotation;
-            
-            Debug.Log($"Local Rotation: {transform.localRotation.eulerAngles}");
-            Debug.Log($"Rotation: {transform.rotation.eulerAngles}");
+            //
+            // Debug.Log($"Local Rotation: {transform.localRotation.eulerAngles}");
+            // Debug.Log($"Rotation: {transform.rotation.eulerAngles}");
             
             //Debug.Log($"rotation 11111 OLD: {rotation}");
+
+            foreach (var coll in _itemEntity.Collisions.Value)
+            {
+                Debug.Log($"coll: {coll}");
+            }
         }
 
-        // protected override void OnLocalRotationChanged(Quaternion value)
-        // {
-        //     transform.localEulerAngles = value.eulerAngles;
-        // }
+        private void OnTriggerEnter(Collider other)
+        {
+            // if (!_itemEntity.Picked.Value)
+            //     return;
+            
+            if (LayerMasks.BuildingSurface == (LayerMasks.BuildingSurface | (1 << other.gameObject.layer)))
+            {
+                //_surfaceCollisionService.CheckCollisionByHash(other.transform.GetHashCode(), transform.GetHashCode());
+                
+                _surfaceCollisionService.AddCollision(other.transform.GetHashCode(), transform.GetHashCode());
+            }
+        }
+
+        private void OnTriggerStay(Collider other)
+        {
+            // if (!_itemEntity.Picked.Value)
+            //     return;
+            
+            if (LayerMasks.BuildingSurface == (LayerMasks.BuildingSurface | (1 << other.gameObject.layer)))
+            {
+               // _surfaceCollisionService.CheckCollisionByHash(other.transform.GetHashCode(), transform.GetHashCode());
+            }
+        }
+
+        private void OnTriggerExit(Collider other)
+        {
+            // if (!_itemEntity.Picked.Value)
+            //     return;
+            
+            if (LayerMasks.BuildingSurface == (LayerMasks.BuildingSurface | (1 << other.gameObject.layer)))
+            {
+                //_itemEntity.Blocked.SetValue(false);
+                
+                _surfaceCollisionService.RemoveCollision(other.transform.GetHashCode(), transform.GetHashCode());
+            }
+        }
+        
+        
     }
 }

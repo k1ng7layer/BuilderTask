@@ -16,10 +16,10 @@ namespace Views.Impl
             var playerEntity = (PlayerEntity)entity;
             playerEntity.ItemPlaceholderTransform.SetValue(_cameraParent);
         }
-        
-        private void Update()
+
+        protected override void OnPositionChanged(Vector3 value)
         {
-            Debug.Log($"LAYER: {gameObject.layer}");
+            _characterController.Move(value);
         }
     }
 }

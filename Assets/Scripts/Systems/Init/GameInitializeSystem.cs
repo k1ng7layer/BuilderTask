@@ -1,4 +1,5 @@
-﻿using Entity;
+﻿using System.Collections.Generic;
+using Entity;
 using Helpers;
 using Repository;
 using Services.LevelProvider;
@@ -81,12 +82,16 @@ namespace Systems.Init
                 var item = new ItemEntity();
                 item.Position.SetValue(itemView.Transform.position);
                 item.Rotation.SetValue(itemView.Transform.rotation);
-                item.AllowedSurfaceMask2.SetValue(LayerMasks.Floor);
+                item.AllowedSurfaceMask2.SetValue(LayerMasks.BuildingSurface);
+                item.AllowedSurface.SetValue(BuildingSurfaceType.Floor | BuildingSurfaceType.Wall | BuildingSurfaceType.Cube);
+                item.BuildingEntityType.SetValue(BuildingSurfaceType.Cube);
                 item.Transform.SetValue(itemView.Transform);
+                item.Collisions.SetValue(new HashSet<int>());
+                item.Layer.SetValue(LayerMask.NameToLayer("BuildingSurface"));
                 
                 itemView.LinkEntity(item);
                 
-                _itemProvider.AddItem(item);
+                _itemProvider.AddItem(itemView.Transform.GetHashCode(), item);
             }
         }
     }

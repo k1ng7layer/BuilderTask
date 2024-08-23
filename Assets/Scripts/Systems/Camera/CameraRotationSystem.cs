@@ -38,7 +38,6 @@ namespace Systems.Camera
 
             _cameraRotation -= rotation;
             
-            Debug.Log($"rotationEuler.x: {rotationEuler.x}");
             _cameraRotation = Mathf.Clamp(_cameraRotation, -90f, 90f);
             camera.Transform.Value.localEulerAngles = Vector3.right *_cameraRotation;
             // var newRotation = Quaternion.Euler(rotationEuler);

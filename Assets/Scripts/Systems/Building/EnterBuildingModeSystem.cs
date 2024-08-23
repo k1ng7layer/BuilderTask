@@ -39,7 +39,7 @@ namespace Systems.Building
             if (_itemSelectionService.SelectedItem == null)
                 return;
 
-            if (_itemPickupService.PickedItem != null)
+            if (_itemPickupService.PickedItem != null && !_itemPickupService.PickedItem.Blocked.Value)
             {
                 _itemPickupService.ReleaseItem();
             }

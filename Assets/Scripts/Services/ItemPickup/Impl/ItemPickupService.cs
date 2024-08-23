@@ -1,4 +1,5 @@
 ﻿using Entity;
+using Helpers;
 using Repository;
 using UnityEngine;
 
@@ -20,22 +21,22 @@ namespace Services.ItemPickup.Impl
             item.Parent.SetValue(_cameraProvider.Camera.Transform.Value);
             item.Picked.SetValue(true);
             item.LocalRotation.SetValue(Quaternion.identity);
-
-            var offset = item.Size.Value.z / 2;
-
-            var position = item.Position.Value;
-            position.z = offset + 2f;
-            position.x = 0;
-            position.y = -1;
-            item.Position.SetValue(position);
+            
+            item.LocalPosition.SetValue(ItemOffsetHelper.GetOffset(item));
 
             PickedItem = item;
             PickedItem.Selected.SetValue(false);
+            PickedItem.Layer.SetValue(LayerMask.NameToLayer("Default"));
+            PickedItem.AttachedToSurface.SetValue(false);
+            PickedItem.Picked.SetValue(true);
         }
 
         public void ReleaseItem()
         {
+            PickedItem.AttachedToSurface.SetValue(true);
+            PickedItem.Layer.SetValue(LayerMask.NameToLayer("BuildingSurface"));
             PickedItem.Parent.SetValue(null);
+            PickedItem.Picked.SetValue(false);
             PickedItem = null;
         }
     }

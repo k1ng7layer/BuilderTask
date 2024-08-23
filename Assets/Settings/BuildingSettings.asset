@@ -13,3 +13,6 @@ MonoBehaviour:
   m_Name: BuildingSettings
   m_EditorClassIdentifier: 
   _magnetDistance: 5
+  _buildingLayer:
+    serializedVersion: 2
+    m_Bits: 512

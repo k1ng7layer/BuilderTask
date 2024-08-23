@@ -7,6 +7,9 @@ namespace Settings.Building
         IBuildingSettings
     {
         [SerializeField] private float _magnetDistance = 10f;
+        [SerializeField] private LayerMask _buildingLayer;
+
+        public LayerMask BuildingLayer => _buildingLayer;
 
         public float MagnetDistance => _magnetDistance;
     }

@@ -11,5 +11,6 @@ namespace Entity
         public Property<Vector3> Position { get; private set; } = new();
         public Property<Transform> Parent { get; private set; } = new();
         public Property<Transform> Transform { get; private set; } = new();
+        public Property<bool> Blocked { get; private set; } = new();
     }
 }

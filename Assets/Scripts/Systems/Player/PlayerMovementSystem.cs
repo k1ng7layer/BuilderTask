@@ -42,7 +42,7 @@ namespace Systems.Player
             var playerPosition = player.Position.Value;
             var newPosition = playerPosition + movementDelta;
             
-            player.Position.SetValue(newPosition);
+            player.Position.SetValue(movementDelta);
         }
     }
 }

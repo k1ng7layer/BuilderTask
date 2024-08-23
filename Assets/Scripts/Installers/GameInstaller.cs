@@ -1,4 +1,5 @@
 ﻿using Repository;
+using Services.Collision.Impl;
 using Services.Input.Impl;
 using Services.ItemPickup.Impl;
 using Services.ItemSelection.Impl;
@@ -48,6 +49,7 @@ namespace Installers
             Container.BindInterfacesAndSelfTo<ItemProvider>().AsSingle();
             Container.BindInterfacesAndSelfTo<ItemSelectionService>().AsSingle();
             Container.BindInterfacesAndSelfTo<ItemPickupService>().AsSingle();
+            Container.BindInterfacesAndSelfTo<SurfaceCollisionService>().AsSingle();
 
             var levelSceneDataProvider = new SceneLevelDataProvider(_sceneLevelData);
 
