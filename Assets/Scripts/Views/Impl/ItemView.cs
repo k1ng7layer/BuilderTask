@@ -57,5 +57,10 @@ namespace Views.Impl
             
             //Debug.Log($"rotation 11111 OLD: {rotation}");
         }
+
+        // protected override void OnLocalRotationChanged(Quaternion value)
+        // {
+        //     transform.localEulerAngles = value.eulerAngles;
+        // }
     }
 }

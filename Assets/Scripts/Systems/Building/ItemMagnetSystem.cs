@@ -73,13 +73,14 @@ namespace Systems.Building
                 return;
                 
             var point = pickedItem.Transform.Value.InverseTransformVector(hit.normal);
-            var rotation = Quaternion.FromToRotation(Vector3.up, point);
+            var Up = pickedItem.Transform.Value.InverseTransformVector(pickedItem.Transform.Value.up);
+            var rotation = Quaternion.FromToRotation(Up, point);
                 
             pickedItem.LocalRotation.SetValue(pickedItem.LocalRotation.Value * rotation);
 
 
             var position = pickedItem.Position.Value;
-            position.y = hit.point.y;
+            //position.y = hit.point.y;
             pickedItem.Position.SetValue(hit.point);
             Debug.Log($"raycastHit.point : {hit.point}");
             // Debug.Log($"raycastHit.transform: {pickedItem.Position.Value}");
