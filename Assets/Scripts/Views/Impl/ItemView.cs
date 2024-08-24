@@ -12,6 +12,7 @@ namespace Views.Impl
         [SerializeField] private MeshFilter _meshFilter;
         [SerializeField] private Collider _collider;
         [SerializeField] private BuildingSurfaceType _buildingSurfaceType;
+        [SerializeField] private BuildingSurfaceType _allowedSurface;
         [Inject] private ISurfaceCollisionService _surfaceCollisionService;
         
         private ItemEntity _itemEntity;
@@ -20,6 +21,7 @@ namespace Views.Impl
 
         public int Hash => transform.GetHashCode();
         public BuildingSurfaceType BuildingSurfaceType => _buildingSurfaceType;
+        public BuildingSurfaceType AllowedSurface => _allowedSurface;
 
         private void Awake()
         {
@@ -39,13 +41,11 @@ namespace Views.Impl
 
             _itemEntity.Picked.ValueChanged += OnPickedChanged;
             _itemEntity.Selected.ValueChanged += OnSelectedChanged;
-            _itemEntity.BuildingEntityType.ValueChanged += OnBuildingEntityTypeChanged;
             _itemEntity.Layer.ValueChanged += OnLayerChanged;
             _itemEntity.Blocked.ValueChanged += OnBlockedChanged;
             _itemEntity.AttachedToSurface.ValueChanged += AttachedToSurfaceChanged;
             
             OnLayerChanged(_itemEntity.Layer.Value);
-            OnBuildingEntityTypeChanged(_itemEntity.BuildingEntityType.Value);
         }
 
         protected override void OnEntityDestroy()
@@ -54,7 +54,6 @@ namespace Views.Impl
             _itemEntity.Layer.ValueChanged -= OnLayerChanged;
             _itemEntity.Selected.ValueChanged -= OnSelectedChanged;
             _itemEntity.Blocked.ValueChanged -= OnBlockedChanged;
-            _itemEntity.BuildingEntityType.ValueChanged -= OnBuildingEntityTypeChanged;
             _itemEntity.AttachedToSurface.ValueChanged -= AttachedToSurfaceChanged;
         }
 
@@ -76,11 +75,6 @@ namespace Views.Impl
         private void OnLayerChanged(int layer)
         {
             gameObject.layer = layer;
-        }
-
-        private void OnBuildingEntityTypeChanged(BuildingSurfaceType buildingSurfaceType)
-        {
-            _buildingSurfaceType = buildingSurfaceType;
         }
 
         private void OnSelectedChanged(bool value)

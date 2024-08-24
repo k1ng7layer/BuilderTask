@@ -6,6 +6,7 @@ using Services.LevelProvider;
 using Services.Spawn;
 using Systems.Core;
 using UnityEngine;
+using Views.Impl;
 
 namespace Systems.Init
 {
@@ -79,12 +80,13 @@ namespace Systems.Init
 
             foreach (var itemView in levelData.ItemsViews)
             {
+                var view = (ItemView)itemView;
                 var item = new ItemEntity();
                 item.Position.SetValue(itemView.Transform.position);
                 item.Rotation.SetValue(itemView.Transform.rotation);
                 item.AllowedSurfaceMask2.SetValue(LayerMasks.BuildingSurface);
-                item.AllowedSurface.SetValue(BuildingSurfaceType.Floor | BuildingSurfaceType.Wall | BuildingSurfaceType.Cube);
-                item.BuildingEntityType.SetValue(BuildingSurfaceType.Cube);
+                item.AllowedSurface.SetValue(view.AllowedSurface);
+                item.BuildingEntityType.SetValue(view.BuildingSurfaceType);
                 item.Transform.SetValue(itemView.Transform);
                 item.Collisions.SetValue(new HashSet<int>());
                 item.Layer.SetValue(LayerMask.NameToLayer("BuildingSurface"));

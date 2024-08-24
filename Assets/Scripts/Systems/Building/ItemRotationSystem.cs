@@ -43,7 +43,7 @@ namespace Systems.Building
             var up = transform.InverseTransformVector(_itemPickupService.PickedItem
                 .Transform.Value.up);
             
-            _itemPickupService.PickedItem.Transform.Value.Rotate(up,  dir * _inputSettings.ItemRotationSensitivity);
+            _itemPickupService.PickedItem.Transform.Value.Rotate(up,  45 * dir);
         }
     }
 }

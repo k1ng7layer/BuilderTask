@@ -45,49 +45,50 @@ namespace Systems.Building
             Physics.RaycastNonAlloc(camera.Transform.Value.position, dir, _result, _buildingSettings.MagnetDistance,
                 _buildingSettings.BuildingLayer);
             
+            if (!Physics.Raycast(camera.Transform.Value.position, dir, out var hit, _buildingSettings.MagnetDistance,
+                    _buildingSettings.BuildingLayer))
+                return;
+            
+            
             Debug.DrawLine(camera.Transform.Value.position, dir * 10f, Color.red);
 
-            foreach (var raycastHit in _result)
+            if (hit.transform == null)
             {
-                if (raycastHit.transform == null)
-                {
-                    pickedItem.AttachedToSurface.SetValue(false);
+                pickedItem.AttachedToSurface.SetValue(false);
                    
-                    pickedItem.LocalPosition.SetValue(ItemOffsetHelper.GetOffset(pickedItem));
-                    return;
-                }
-                
-                if (!raycastHit.transform.gameObject.TryGetComponent<IBuildingSurface>(out var buildingSurface))
-                    continue;
-                
-                if (!pickedItem.AllowedSurface.Value.HasFlag(buildingSurface.BuildingSurfaceType))
-                    continue;
-                
-                Debug.DrawLine(raycastHit.point, raycastHit.normal * 10f, Color.red);
-                
-                // Debug.Log($"raycastHit: {LayerMask.LayerToName(raycastHit.transform.gameObject.layer)}");
-                 Debug.Log($"raycastHit name: {raycastHit.transform.gameObject}");
-                
-                var point = pickedItem.Transform.Value.InverseTransformVector(raycastHit.normal);
-                var Up = pickedItem.Transform.Value.InverseTransformVector(pickedItem.Transform.Value.up);
-                var rotation = Quaternion.FromToRotation(Up, point);
-                
-                pickedItem.LocalRotation.SetValue(pickedItem.LocalRotation.Value * rotation);
-            
-                var position = raycastHit.point;
-                position += raycastHit.normal.normalized * pickedItem.Size.Value.y / 2f;
-                pickedItem.Position.SetValue(position);
-
-                if (pickedItem.AttachedSurfaceHash.Value != buildingSurface.Hash)
-                {
-                    Debug.Log($"1111111 AttachedSurfaceHash");
-                    pickedItem.AttachedSurfaceHash.SetValue(buildingSurface.Hash);
-                    pickedItem.AttachedToSurface.SetValue(true);
-                }
-                
-                _surfaceCollisionService.CheckCollisionByHash(pickedItem.Transform.Value.GetHashCode());
-                
+                pickedItem.LocalPosition.SetValue(ItemOffsetHelper.GetOffset(pickedItem));
+                return;
             }
+                
+            if (!hit.transform.gameObject.TryGetComponent<IBuildingSurface>(out var buildingSurface))
+                return;
+                
+            if (!pickedItem.AllowedSurface.Value.HasFlag(buildingSurface.BuildingSurfaceType))
+                return;
+                
+            Debug.DrawLine(hit.point, hit.normal * 10f, Color.red);
+                
+            // Debug.Log($"raycastHit: {LayerMask.LayerToName(raycastHit.transform.gameObject.layer)}");
+            Debug.Log($"raycastHit name: {hit.transform.gameObject}");
+                
+            var point = pickedItem.Transform.Value.InverseTransformVector(hit.normal);
+            var Up = pickedItem.Transform.Value.InverseTransformVector(pickedItem.Transform.Value.up);
+            var rotation = Quaternion.FromToRotation(Up, point);
+                
+            pickedItem.LocalRotation.SetValue(pickedItem.LocalRotation.Value * rotation);
+            
+            var position = hit.point;
+            position += hit.normal.normalized * pickedItem.Size.Value.y / 2f;
+            pickedItem.Position.SetValue(position);
+
+            if (pickedItem.AttachedSurfaceHash.Value != buildingSurface.Hash)
+            {
+                Debug.Log($"1111111 AttachedSurfaceHash");
+                pickedItem.AttachedSurfaceHash.SetValue(buildingSurface.Hash);
+                pickedItem.AttachedToSurface.SetValue(true);
+            }
+                
+            _surfaceCollisionService.CheckCollisionByHash(pickedItem.Transform.Value.GetHashCode());
         }
     }
 }

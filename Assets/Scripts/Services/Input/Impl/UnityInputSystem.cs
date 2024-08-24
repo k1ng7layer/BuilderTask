@@ -36,9 +36,12 @@ namespace Services.Input.Impl
                 UseButtonClicked?.Invoke();
 
             var scrollWheel = UnityEngine.Input.GetAxis("Mouse ScrollWheel");
-            
+
             if (scrollWheel > 0 || scrollWheel < 0)
-                ItemRotation?.Invoke(scrollWheel);
+            {
+                var value = scrollWheel > 0 ? 1 : -1;
+                ItemRotation?.Invoke(value);
+            }
         }
     }
 }
