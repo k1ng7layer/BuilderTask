@@ -90,55 +90,22 @@ namespace Views.Impl
                 return;
 
             _itemEntity.Position.Value = transform.position;
-             _itemEntity.Rotation.Value = transform.rotation;
+            _itemEntity.Rotation.Value = transform.rotation;
             _itemEntity.LocalRotation.Value = transform.localRotation;
-            //
-            // Debug.Log($"Local Rotation: {transform.localRotation.eulerAngles}");
-            // Debug.Log($"Rotation: {transform.rotation.eulerAngles}");
-            
-            //Debug.Log($"rotation 11111 OLD: {rotation}");
-
-            foreach (var coll in _itemEntity.Collisions.Value)
-            {
-                Debug.Log($"coll: {coll}, {_itemEntity.AttachedToSurface.Value}");
-            }
-            
-            Debug.Log($"coll: Attached to surface { _itemEntity.AttachedToSurface.Value}");
         }
 
         private void OnTriggerEnter(Collider other)
         {
-            // if (!_itemEntity.Picked.Value)
-            //     return;
-            
             if (LayerMasks.BuildingSurface == (LayerMasks.BuildingSurface | (1 << other.gameObject.layer)))
             {
-                //_surfaceCollisionService.CheckCollisionByHash(other.transform.GetHashCode(), transform.GetHashCode());
-                
                 _surfaceCollisionService.AddCollision(other.transform.GetHashCode(), transform.GetHashCode());
-            }
-        }
-
-        private void OnTriggerStay(Collider other)
-        {
-            // if (!_itemEntity.Picked.Value)
-            //     return;
-            
-            if (LayerMasks.BuildingSurface == (LayerMasks.BuildingSurface | (1 << other.gameObject.layer)))
-            {
-               // _surfaceCollisionService.CheckCollisionByHash(other.transform.GetHashCode(), transform.GetHashCode());
             }
         }
 
         private void OnTriggerExit(Collider other)
         {
-            // if (!_itemEntity.Picked.Value)
-            //     return;
-            
             if (LayerMasks.BuildingSurface == (LayerMasks.BuildingSurface | (1 << other.gameObject.layer)))
             {
-                //_itemEntity.Blocked.SetValue(false);
-                
                 _surfaceCollisionService.RemoveCollision(other.transform.GetHashCode(), transform.GetHashCode());
             }
         }

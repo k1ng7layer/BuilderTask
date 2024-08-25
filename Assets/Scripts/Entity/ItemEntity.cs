@@ -14,7 +14,6 @@ namespace Entity
         public Property<int> Layer { get; private set; } = new();
         public Property<BuildingSurfaceType> AllowedSurface { get; private set; } = new();
         public Property<BuildingSurfaceType> BuildingEntityType { get; private set; } = new();
-        public Property<int> AllowedSurfaceMask2 { get; private set; } = new();
         public Property<int> AttachedSurfaceHash { get; private set; } = new();
         public Property<HashSet<int>> Collisions { get; private set; } = new();
     }

@@ -1,6 +1,5 @@
 ﻿using Entity;
 using Repository;
-using UnityEngine;
 
 namespace Services.Collision.Impl
 {
@@ -26,8 +25,6 @@ namespace Services.Collision.Impl
 
         public void AddCollision(int hash, int itemHash)
         {
-            Debug.Log($"1111111 AddCollision");
-            
             var item = _itemProvider.ItemEntities[itemHash];
 
             item.Collisions.Value.Add(hash);
@@ -36,8 +33,6 @@ namespace Services.Collision.Impl
 
         public void RemoveCollision(int hash, int itemHash)
         {
-            Debug.Log($"1111111 RemoveCollision");
-            
             var item = _itemProvider.ItemEntities[itemHash];
 
             item.Collisions.Value.Remove(hash);

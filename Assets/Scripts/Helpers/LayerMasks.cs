@@ -13,11 +13,6 @@ namespace Helpers
 		public static int Default => DefaultMask.Value;
 		public static int Floor => FloorMask.Value;
 		public static int BuildingSurface => BuildingSurfaceMask.Value;
-
-		// public static Mask CreateMasks()
-		// {
-		// 	
-		// }
 		
 		public class Mask
 		{

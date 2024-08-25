@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using Entity;
-using Helpers;
 using Repository;
 using Services.LevelProvider;
 using Services.Spawn;
@@ -84,7 +83,6 @@ namespace Systems.Init
                 var item = new ItemEntity();
                 item.Position.SetValue(itemView.Transform.position);
                 item.Rotation.SetValue(itemView.Transform.rotation);
-                item.AllowedSurfaceMask2.SetValue(LayerMasks.BuildingSurface);
                 item.AllowedSurface.SetValue(view.AllowedSurface);
                 item.BuildingEntityType.SetValue(view.BuildingSurfaceType);
                 item.Transform.SetValue(itemView.Transform);
