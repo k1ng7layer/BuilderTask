@@ -39,7 +39,7 @@ namespace Systems.Building
             if (_itemSelectionService.SelectedItem == null)
                 return;
 
-            if (_itemPickupService.PickedItem != null && !_itemPickupService.PickedItem.Blocked.Value)
+            if (CanRelease())
             {
                 _itemPickupService.ReleaseItem();
             }
@@ -47,6 +47,12 @@ namespace Systems.Building
             {
                 _itemPickupService.PickItem(_itemSelectionService.SelectedItem);
             }
+        }
+
+        private bool CanRelease()
+        {
+            var item = _itemPickupService.PickedItem;
+            return item != null && !item.Blocked.Value && item.AttachedToSurface.Value;
         }
     }
 }

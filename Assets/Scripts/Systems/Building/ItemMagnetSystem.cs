@@ -42,19 +42,25 @@ namespace Systems.Building
             if (pickedItem == null)
                 return;
 
-            Physics.RaycastNonAlloc(camera.Transform.Value.position, dir, _result, _buildingSettings.MagnetDistance,
-                _buildingSettings.BuildingLayer);
-            
             if (!Physics.Raycast(camera.Transform.Value.position, dir, out var hit, _buildingSettings.MagnetDistance,
                     _buildingSettings.BuildingLayer))
+            {
+                pickedItem.AttachedToSurface.SetValue(false);
+                pickedItem.LocalPosition.SetValue(ItemOffsetHelper.GetOffset(pickedItem));
+                pickedItem.AttachedSurfaceHash.SetValue(-1);
                 return;
+            }
+               
             
             
             Debug.DrawLine(camera.Transform.Value.position, dir * 10f, Color.red);
 
+            Debug.Log($"raycastHit 22222: {hit.transform}");
+            
             if (hit.transform == null)
             {
                 pickedItem.AttachedToSurface.SetValue(false);
+                //pickedItem.AttachedSurfaceHash.SetValue(-1);
                    
                 pickedItem.LocalPosition.SetValue(ItemOffsetHelper.GetOffset(pickedItem));
                 return;
@@ -65,6 +71,9 @@ namespace Systems.Building
                 
             if (!pickedItem.AllowedSurface.Value.HasFlag(buildingSurface.BuildingSurfaceType))
                 return;
+
+            Debug.Log(
+                $"pickedItem.AllowedSurface: {pickedItem.AllowedSurface.Value}, buildingSurface.BuildingSurfaceType: {buildingSurface.BuildingSurfaceType}");
                 
             Debug.DrawLine(hit.point, hit.normal * 10f, Color.red);
                 
@@ -80,6 +89,7 @@ namespace Systems.Building
             var position = hit.point;
             position += hit.normal.normalized * pickedItem.Size.Value.y / 2f;
             pickedItem.Position.SetValue(position);
+            pickedItem.AttachedToSurface.SetValue(true);
 
             if (pickedItem.AttachedSurfaceHash.Value != buildingSurface.Hash)
             {
@@ -88,7 +98,8 @@ namespace Systems.Building
                 pickedItem.AttachedToSurface.SetValue(true);
             }
                 
-            _surfaceCollisionService.CheckCollisionByHash(pickedItem.Transform.Value.GetHashCode());
+            var hasCollision = _surfaceCollisionService.CheckCollisionByHash(pickedItem.Transform.Value.GetHashCode());
+            // pickedItem.AttachedToSurface.SetValue(hasCollision);
         }
     }
 }

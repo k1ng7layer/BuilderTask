@@ -86,6 +86,8 @@ namespace Services.ItemSelection.Impl
             if (!Physics.Raycast(cam.Transform.Value.position, dir, out var hit, _buildingSettings.MagnetDistance,
                     _buildingSettings.BuildingLayer))
                 return null;
+            
+            Debug.Log($"Pointing on {hit.transform.gameObject.name}");
 
             return !_itemProvider.ItemEntities.TryGetValue(hit.transform.GetHashCode(), out var item) ? null : item;
         }

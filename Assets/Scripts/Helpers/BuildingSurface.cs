@@ -4,6 +4,7 @@ namespace Helpers
 {
     public class BuildingSurface : MonoBehaviour, IBuildingSurface
     {
+        [EnumFlag]
         [SerializeField] private BuildingSurfaceType _buildingSurfaceType;
 
         public int Hash => transform.GetHashCode();

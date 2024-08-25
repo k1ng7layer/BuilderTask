@@ -28,6 +28,7 @@ namespace Services.ItemPickup.Impl
             PickedItem.Selected.SetValue(false);
             PickedItem.Layer.SetValue(LayerMask.NameToLayer("Default"));
             PickedItem.AttachedToSurface.SetValue(false);
+            PickedItem.AttachedSurfaceHash.SetValue(-1);
             PickedItem.Picked.SetValue(true);
         }
 

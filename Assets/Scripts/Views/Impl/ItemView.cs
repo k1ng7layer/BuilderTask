@@ -11,7 +11,9 @@ namespace Views.Impl
         [SerializeField] private Renderer _renderer;
         [SerializeField] private MeshFilter _meshFilter;
         [SerializeField] private Collider _collider;
+        [EnumFlag]
         [SerializeField] private BuildingSurfaceType _buildingSurfaceType;
+        [EnumFlag]
         [SerializeField] private BuildingSurfaceType _allowedSurface;
         [Inject] private ISurfaceCollisionService _surfaceCollisionService;
         
@@ -98,8 +100,10 @@ namespace Views.Impl
 
             foreach (var coll in _itemEntity.Collisions.Value)
             {
-                Debug.Log($"coll: {coll}");
+                Debug.Log($"coll: {coll}, {_itemEntity.AttachedToSurface.Value}");
             }
+            
+            Debug.Log($"coll: Attached to surface { _itemEntity.AttachedToSurface.Value}");
         }
 
         private void OnTriggerEnter(Collider other)

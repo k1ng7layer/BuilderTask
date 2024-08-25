@@ -3,12 +3,12 @@
 namespace Helpers
 {
     [Flags]
-    public enum BuildingSurfaceType : byte
+    public enum BuildingSurfaceType
     {
-        None = 0,
-        Wall = 1,
-        Floor = 2,
-        Cube = 3,
-        Circle = 4,
+        Floor,
+        Wall,
+        Circle,
+        Box,
+        None,
     }
 }
