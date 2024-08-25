@@ -21,7 +21,6 @@ namespace Services.ItemPickup.Impl
             item.Parent.SetValue(_cameraProvider.Camera.Transform.Value);
             item.Picked.SetValue(true);
             item.LocalRotation.SetValue(Quaternion.identity);
-            
             item.LocalPosition.SetValue(ItemOffsetHelper.GetOffset(item));
 
             PickedItem = item;

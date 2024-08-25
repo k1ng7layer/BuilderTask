@@ -1,8 +1,9 @@
 ﻿using System;
 using Services.Input;
 using Services.ItemPickup;
-using Settings.Input;
+using Settings.Building;
 using Systems.Core;
+using UnityEngine;
 
 namespace Systems.Building
 {
@@ -11,17 +12,17 @@ namespace Systems.Building
     {
         private readonly IPlayerInputService _playerInputService;
         private readonly IItemPickupService _itemPickupService;
-        private readonly IInputSettings _inputSettings;
+        private readonly IBuildingSettings _buildingSettings;
 
         public ItemRotationSystem(
             IPlayerInputService playerInputService, 
             IItemPickupService itemPickupService,
-            IInputSettings inputSettings
+            IBuildingSettings buildingSettings
         )
         {
             _playerInputService = playerInputService;
             _itemPickupService = itemPickupService;
-            _inputSettings = inputSettings;
+            _buildingSettings = buildingSettings;
         }
         
         public void Initialize()
@@ -40,10 +41,14 @@ namespace Systems.Building
                 return;
 
             var transform = _itemPickupService.PickedItem.Transform.Value;
-            var up = transform.InverseTransformVector(_itemPickupService.PickedItem
-                .Transform.Value.up);
+            var worldRotation = _itemPickupService.PickedItem.Rotation.Value;
+            var worldUp = worldRotation * Vector3.up;
+            var localUp = transform.InverseTransformVector(worldUp);
+            var localRotation = _itemPickupService.PickedItem.LocalRotation.Value;
+            var delta = Quaternion.AngleAxis(_buildingSettings.RotationDeltaDeg * dir, localUp);
+            var rotation = localRotation * delta;
             
-            _itemPickupService.PickedItem.Transform.Value.Rotate(up,  45 * dir);
+            _itemPickupService.PickedItem.LocalRotation.SetValue(rotation);
         }
     }
 }

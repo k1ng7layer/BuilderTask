@@ -6,14 +6,14 @@ using Systems.Core;
 
 namespace Systems.Building
 {
-    public class EnterBuildingModeSystem : IInitializeSystem, 
+    public class BuildingModeSystem : IInitializeSystem, 
         IDisposable
     {
         private readonly IPlayerInputService _playerInputService;
         private readonly IItemSelectionService _itemSelectionService;
         private readonly IItemPickupService _itemPickupService;
 
-        public EnterBuildingModeSystem(
+        public BuildingModeSystem(
             IPlayerInputService playerInputService, 
             IItemSelectionService itemSelectionService,
             IItemPickupService itemPickupService
@@ -36,7 +36,9 @@ namespace Systems.Building
 
         private void EnterBuildingMode()
         {
-            if (_itemSelectionService.SelectedItem == null)
+            var item = _itemSelectionService.SelectedItem;
+            
+            if (item == null)
                 return;
 
             if (CanRelease())
@@ -45,7 +47,8 @@ namespace Systems.Building
             }
             else
             {
-                _itemPickupService.PickItem(_itemSelectionService.SelectedItem);
+                if (!item.Picked.Value)
+                    _itemPickupService.PickItem(item);
             }
         }
 

@@ -16,9 +16,7 @@ namespace Services.Collision.Impl
         {
             var item = _itemProvider.ItemEntities[itemHash];
 
-            var collision =  CheckCollision(item);
-            
-            item.Blocked.SetValue(collision);
+            var collision = CheckCollision(item);
 
             return collision;
         }

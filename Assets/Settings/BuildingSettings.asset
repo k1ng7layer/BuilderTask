@@ -16,3 +16,4 @@ MonoBehaviour:
   _buildingLayer:
     serializedVersion: 2
     m_Bits: 512
+  _rotationDeltaDeg: 45

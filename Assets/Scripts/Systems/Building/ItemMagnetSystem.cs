@@ -1,7 +1,6 @@
 ﻿using Entity;
 using Helpers;
 using Services.Building;
-using Services.Collision;
 using Services.ItemPickup;
 using Systems.Core;
 using UnityEngine;
@@ -11,16 +10,14 @@ namespace Systems.Building
     public class ItemMagnetSystem : IUpdateSystem
     {
         private readonly IItemPickupService _itemPickupService;
-        private readonly ISurfaceCollisionService _surfaceCollisionService;
         private readonly IBuildingSurfaceProvider _buildingSurfaceProvider;
 
-        public ItemMagnetSystem(IItemPickupService itemPickupService,
-            ISurfaceCollisionService surfaceCollisionService,
+        public ItemMagnetSystem(
+            IItemPickupService itemPickupService,
             IBuildingSurfaceProvider buildingSurfaceProvider
         )
         {
             _itemPickupService = itemPickupService;
-            _surfaceCollisionService = surfaceCollisionService;
             _buildingSurfaceProvider = buildingSurfaceProvider;
         }
         
@@ -31,42 +28,65 @@ namespace Systems.Building
             if (pickedItem == null)
                 return;
 
-            if (!_buildingSurfaceProvider.TryGetValidSurface(pickedItem, out var surface))
+            if (!_buildingSurfaceProvider.TryGetBuildingSurface(out var surface))
             {
-                ResetPosition(pickedItem);
+                if (pickedItem.AttachedToSurface.Value)
+                    ResetPosition(pickedItem);
+                
                 return;
             }
 
-            AttachToSurface(pickedItem, surface);
-                
-            _surfaceCollisionService.CheckCollisionByHash(pickedItem.Transform.Value.GetHashCode());
+            if (_buildingSurfaceProvider.ValidateSurface(pickedItem, surface.Type))
+            {
+                AttachToSurface(pickedItem, surface);
+            }
         }
 
         private void ResetPosition(ItemEntity pickedItem)
         {
             pickedItem.AttachedToSurface.SetValue(false);
             pickedItem.LocalPosition.SetValue(ItemOffsetHelper.GetOffset(pickedItem));
+            pickedItem.LocalRotation.SetValue(Quaternion.identity);
             pickedItem.AttachedSurfaceHash.SetValue(-1);
         }
 
         private void AttachToSurface(ItemEntity pickedItem, SurfaceInfo surface)
         {
-            var point = pickedItem.Transform.Value.InverseTransformVector(surface.Normal);
-            var up = pickedItem.Transform.Value.InverseTransformVector(pickedItem.Transform.Value.up);
-            var rotation = Quaternion.FromToRotation(up, point);
-                
-            pickedItem.LocalRotation.SetValue(pickedItem.LocalRotation.Value * rotation);
+            var rotation = CalculateRotationByNormal(pickedItem, surface.Normal);
             
-            var position = surface.Point;
-            position += surface.Normal.normalized * pickedItem.Size.Value.y / 2f;
-            pickedItem.Position.SetValue(position);
-            pickedItem.AttachedToSurface.SetValue(true);
+            pickedItem.LocalRotation.SetValue(pickedItem.LocalRotation.Value * rotation);
 
-            if (pickedItem.AttachedSurfaceHash.Value != surface.Hash)
-            {
-                pickedItem.AttachedSurfaceHash.SetValue(surface.Hash);
-                pickedItem.AttachedToSurface.SetValue(true);
-            }
+            var position = CalculatePositionOnSurface(pickedItem, surface.Point, surface.Normal);
+            pickedItem.Position.SetValue(position);
+            
+            pickedItem.AttachedToSurface.SetValue(true);
+            
+            if (pickedItem.AttachedSurfaceHash.Value == surface.Hash) return;
+            
+            pickedItem.AttachedSurfaceHash.SetValue(surface.Hash);
+            pickedItem.AttachedToSurface.SetValue(true);
+        }
+
+        private Quaternion CalculateRotationByNormal(ItemEntity itemEntity, in Vector3 normal)
+        {
+            var point = itemEntity.Transform.Value.InverseTransformDirection(normal);
+            var worldRotation = itemEntity.Rotation.Value;
+            var worldUp = worldRotation * Vector3.up;
+            var localUp = itemEntity.Transform.Value.InverseTransformVector(worldUp);
+            var rotation = Quaternion.FromToRotation(localUp, point);
+            
+            return rotation;
+        }
+
+        private Vector3 CalculatePositionOnSurface(
+            ItemEntity itemEntity, 
+            in Vector3 contactPoint, 
+            in Vector3 surfaceNormal
+        )
+        {
+            var position = contactPoint + surfaceNormal.normalized * itemEntity.Size.Value.y / 2f;
+
+            return position;
         }
     }
 }

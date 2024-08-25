@@ -6,5 +6,6 @@ namespace Settings.Building
     {
         LayerMask BuildingLayer { get; }
         float MagnetDistance { get; }
+        float RotationDeltaDeg { get; }
     }
 }

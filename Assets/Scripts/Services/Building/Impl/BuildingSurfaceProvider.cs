@@ -20,7 +20,7 @@ namespace Services.Building.Impl
             _buildingSettings = buildingSettings;
         }
         
-        public bool TryGetValidSurface(ItemEntity itemEntity, out SurfaceInfo surface)
+        public bool TryGetBuildingSurface(out SurfaceInfo surface)
         {
             var camera = _cameraProvider.Camera;
             var dir = camera.Transform.Value.forward;
@@ -39,12 +39,14 @@ namespace Services.Building.Impl
                 
             if (!hit.transform.gameObject.TryGetComponent<IBuildingSurface>(out var buildingSurface))
                 return false;
-                
-            if (!itemEntity.AllowedSurface.Value.HasFlag(buildingSurface.BuildingSurfaceType))
-                return false;
-
-            surface = new SurfaceInfo(buildingSurface.Hash, hit.normal, hit.point);
+            
+            surface = new SurfaceInfo(buildingSurface.Hash, hit.normal, hit.point, buildingSurface.BuildingSurfaceType);
             return true;
+        }
+
+        public bool ValidateSurface(ItemEntity itemEntity, BuildingSurfaceType surfaceType)
+        {
+            return itemEntity.AllowedSurface.Value.HasFlag(surfaceType);
         }
     }
 }

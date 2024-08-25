@@ -8,9 +8,11 @@ namespace Settings.Building
     {
         [SerializeField] private float _magnetDistance = 10f;
         [SerializeField] private LayerMask _buildingLayer;
+        [SerializeField] private float _rotationDeltaDeg = 45f;
 
         public LayerMask BuildingLayer => _buildingLayer;
 
         public float MagnetDistance => _magnetDistance;
+        public float RotationDeltaDeg => _rotationDeltaDeg;       
     }
 }
