@@ -78,9 +78,12 @@ namespace Systems.Building
         {
             var playerTransform = _playerProvider.Player.Transform.Value;
 
+            var angle = _itemPickupService.PickedItem.OffsetAngle.Value;
             var project = Vector3.ProjectOnPlane(playerTransform.forward, normal);
             var rotation = Quaternion.LookRotation(project, normal);
             
+            rotation *= Quaternion.Euler(0f, angle, 0f);
+           
             return rotation;
         }
 

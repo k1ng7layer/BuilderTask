@@ -37,18 +37,17 @@ namespace Systems.Building
 
         private void RotateItem(float dir)
         {
-            if (_itemPickupService.PickedItem == null)
-                return;
-
-            var transform = _itemPickupService.PickedItem.Transform.Value;
-            var worldRotation = _itemPickupService.PickedItem.Rotation.Value;
-            var worldUp = worldRotation * Vector3.up;
-            var localUp = transform.InverseTransformVector(worldUp);
-            var localRotation = _itemPickupService.PickedItem.LocalRotation.Value;
-            var delta = Quaternion.AngleAxis(_buildingSettings.RotationDeltaDeg * dir, localUp);
-            var rotation = localRotation * delta;
+            var item = _itemPickupService.PickedItem;
             
-            _itemPickupService.PickedItem.LocalRotation.SetValue(rotation);
+            if (item == null)
+                return;
+            
+            var angle = item.OffsetAngle.Value;
+            
+            angle += _buildingSettings.RotationDeltaDeg * dir;
+            angle = Mathf.Repeat(angle, 360f);
+            
+            item.OffsetAngle.SetValue(angle);
         }
     }
 }
