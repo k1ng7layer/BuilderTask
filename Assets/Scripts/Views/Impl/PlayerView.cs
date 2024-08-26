@@ -1,3 +1,4 @@
+using System;
 using Entity;
 using UnityEngine;
 
@@ -20,6 +21,11 @@ namespace Views.Impl
         protected override void OnPositionChanged(Vector3 value)
         {
             _characterController.Move(value);
+        }
+
+        private void Update()
+        {
+            
         }
     }
 }

@@ -36,8 +36,8 @@ namespace Installers
             Container.BindInterfacesAndSelfTo<CameraRotationSystem>().AsSingle();
             Container.BindInterfacesAndSelfTo<GameInitializeSystem>().AsSingle();
             Container.BindInterfacesAndSelfTo<BuildingModeSystem>().AsSingle();
-            Container.BindInterfacesAndSelfTo<ItemRotationSystem>().AsSingle();
             Container.BindInterfacesAndSelfTo<ItemMagnetSystem>().AsSingle();
+            Container.BindInterfacesAndSelfTo<ItemRotationSystem>().AsSingle();
             Container.BindInterfacesAndSelfTo<ItemCollisionSystem>().AsSingle();
         }
 

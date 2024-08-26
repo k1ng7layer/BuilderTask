@@ -1,5 +1,6 @@
 ﻿using Entity;
 using Helpers;
+using Repository;
 using Services.Building;
 using Services.ItemPickup;
 using Systems.Core;
@@ -11,14 +12,20 @@ namespace Systems.Building
     {
         private readonly IItemPickupService _itemPickupService;
         private readonly IBuildingSurfaceProvider _buildingSurfaceProvider;
+        private readonly PlayerProvider _playerProvider;
+        private readonly CameraProvider _cameraProvider;
 
         public ItemMagnetSystem(
             IItemPickupService itemPickupService,
-            IBuildingSurfaceProvider buildingSurfaceProvider
+            IBuildingSurfaceProvider buildingSurfaceProvider,
+            PlayerProvider playerProvider,
+            CameraProvider cameraProvider
         )
         {
             _itemPickupService = itemPickupService;
             _buildingSurfaceProvider = buildingSurfaceProvider;
+            _playerProvider = playerProvider;
+            _cameraProvider = cameraProvider;
         }
         
         public void Update()
@@ -52,9 +59,9 @@ namespace Systems.Building
 
         private void AttachToSurface(ItemEntity pickedItem, SurfaceInfo surface)
         {
-            var rotation = CalculateRotationByNormal(pickedItem, surface.Normal);
+            var rotation = CalculateRotationByNormal(surface.Normal);
             
-            pickedItem.LocalRotation.SetValue(pickedItem.LocalRotation.Value * rotation);
+            pickedItem.Rotation.SetValue(rotation);
 
             var position = CalculatePositionOnSurface(pickedItem, surface.Point, surface.Normal);
             pickedItem.Position.SetValue(position);
@@ -67,13 +74,12 @@ namespace Systems.Building
             pickedItem.AttachedToSurface.SetValue(true);
         }
 
-        private Quaternion CalculateRotationByNormal(ItemEntity itemEntity, in Vector3 normal)
+        private Quaternion CalculateRotationByNormal(in Vector3 normal)
         {
-            var point = itemEntity.Transform.Value.InverseTransformDirection(normal);
-            var worldRotation = itemEntity.Rotation.Value;
-            var worldUp = worldRotation * Vector3.up;
-            var localUp = itemEntity.Transform.Value.InverseTransformVector(worldUp);
-            var rotation = Quaternion.FromToRotation(localUp, point);
+            var playerTransform = _playerProvider.Player.Transform.Value;
+
+            var project = Vector3.ProjectOnPlane(playerTransform.forward, normal);
+            var rotation = Quaternion.LookRotation(project, normal);
             
             return rotation;
         }

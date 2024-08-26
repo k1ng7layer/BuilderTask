@@ -51,6 +51,7 @@ namespace Systems.Init
             var player = new PlayerEntity();
             player.Position.SetValue(levelData.PlayerSpawnPosition);
             player.Rotation.SetValue( levelData.PlayerSpawnRotation);
+            player.Transform.SetValue( playerView.Transform);
             
             playerView.LinkEntity(player);
             
